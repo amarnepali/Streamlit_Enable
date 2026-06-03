@@ -232,3 +232,14 @@ if course_cols:
 #     file_name="followup_with_mobile.xlsx",
 #     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 # )
+
+
+"""
+Create DNS record
+
+Type: A
+Name: app
+Value: YOUR_SERVER_PUBLIC_IP
+TTL: default
+
+"""
