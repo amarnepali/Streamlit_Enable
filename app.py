@@ -61,8 +61,35 @@ if df.empty:
 
 st.success(f"Loaded {len(df)} records")
 
+# st.subheader("Raw Data Preview")
+# st.dataframe(df, use_container_width=True)
 st.subheader("Raw Data Preview")
-st.dataframe(df, use_container_width=True)
+
+# Enterprise-level privacy masking
+# Keeps the columns visible but hides sensitive values
+preview_df = df.copy()
+
+sensitive_columns = [
+    "FULLNAME",
+    "USI",
+    "EMAIL",
+    "EMAILADDRESS",
+    "MOBILE",
+    "PHONE",
+    "DATEOFBIRTH",
+    "DOB",
+    "ADDRESS",
+    "POSTCODE"
+]
+
+for col in sensitive_columns:
+    if col in preview_df.columns:
+        preview_df[col] = "*** HIDDEN ***"
+
+st.dataframe(
+    preview_df,
+    use_container_width=True
+)
 
 st.subheader("Dashboard Summary")
 
