@@ -51,7 +51,7 @@ st.title("aXcelerate Enrolment Dashboard")
 
 if st.button("Refresh data now"):
     st.cache_data.clear()
-df = load_axcelerate_report("REPORT_ID_ENROLLMENT")
+df = load_axcelerate_report(REPORT_ID_ENROLLMENT)
 # df = load_axcelerate_report()
 
 if df.empty:

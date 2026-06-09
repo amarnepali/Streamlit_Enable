@@ -202,7 +202,7 @@ if missing_columns:
     st.stop()
 
 with st.spinner("Loading contact details report from aXcelerate..."):
-    contact_df = load_axcelerate_report("REPORT_ID_CONTACT")
+    contact_df = load_axcelerate_report(REPORT_ID_CONTACT)
 
 if contact_df.empty:
     st.error("No contact details loaded from aXcelerate.")
