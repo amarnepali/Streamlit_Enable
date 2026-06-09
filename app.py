@@ -52,7 +52,7 @@ st.title("aXcelerate Enrolment Dashboard")
 if st.button("Refresh data now"):
     st.cache_data.clear()
 
-report_id_E = st.secrets("REPORT_ID_ENROLLMENT")
+report_id_E = st.secrets["REPORT_ID_ENROLLMENT"]
 df = load_axcelerate_report(report_id_E)
 # df = load_axcelerate_report()
 
