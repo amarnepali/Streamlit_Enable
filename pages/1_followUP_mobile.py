@@ -155,7 +155,7 @@ st.title("Follow-up Mobile Phone Integration")
 st.write(
     """
     Upload follow-up CSV/XLSX file,
-    automatically match contact details from aXcelerate report 93013,
+    automatically match contact details from aXcelerate report 93228 Report_id_contact,
     add mobile phone numbers,
     filter by task owner,
     and download final follow-up file.
@@ -202,7 +202,7 @@ if missing_columns:
     st.stop()
 
 with st.spinner("Loading contact details report from aXcelerate..."):
-    contact_df = load_axcelerate_report("93228")
+    contact_df = load_axcelerate_report("REPORT_ID_CONTACT")
 
 if contact_df.empty:
     st.error("No contact details loaded from aXcelerate.")
