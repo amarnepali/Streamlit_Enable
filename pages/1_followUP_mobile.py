@@ -200,9 +200,9 @@ missing_columns = [c for c in required_columns if c not in followup_df.columns]
 if missing_columns:
     st.error(f"Missing required columns: {missing_columns}")
     st.stop()
-
+report_id_C = st.secrets("REPORT_ID_CONTACT")
 with st.spinner("Loading contact details report from aXcelerate..."):
-    contact_df = load_axcelerate_report(REPORT_ID_CONTACT)
+    contact_df = load_axcelerate_report(report_id_C)
 
 if contact_df.empty:
     st.error("No contact details loaded from aXcelerate.")
