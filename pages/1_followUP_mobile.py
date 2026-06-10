@@ -210,7 +210,7 @@ followup_df = read_uploaded_file(uploaded_file)
 preiew_followUp_df = followup_df.copy()
 preiew_followUp_df = preiew_followUp_df.sort_values(
     by=date_col,
-    ascending=True
+    ascending=False
 )
 st.subheader("Uploaded Follow-up File")
 for col in sensitive_columns:
@@ -382,7 +382,7 @@ if len(selected_date_range) == 2:
 
 filtered_df = filtered_df.sort_values(
     by=date_col,
-    ascending=True
+    ascending=False
 )
 
 
