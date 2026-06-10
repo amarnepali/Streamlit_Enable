@@ -150,6 +150,22 @@ st.set_page_config(
     layout="wide"
 )
 
+sensitive_columns = [
+    "FULLNAME",
+    "USI",
+    "EMAIL",
+    "EMAILADDRESS",
+    "MOBILE",
+    "PHONE",
+    "DATEOFBIRTH",
+    "DOB",
+    "ADDRESS",
+    "POSTCODE",
+    "Email",
+    "Contact"
+]
+
+
 st.title("Follow-up Mobile Phone Integration")
 
 st.write(
@@ -190,8 +206,18 @@ if uploaded_file is None:
 
 followup_df = read_uploaded_file(uploaded_file)
 
+preiew_followUp_df = followup_df.copy()
+
 st.subheader("Uploaded Follow-up File")
-st.dataframe(followup_df.head(20), use_container_width=True)
+for col in sensitive_columns:
+    if col in preiew_followUp_df.columns:
+        preiew_followUp_df[col] = "*** HIDDEN ***"
+
+st.dataframe(
+    preiew_followUp_df.head(20),
+    use_container_width=True
+)
+# st.dataframe(followup_df.head(20), use_container_width=True)
 
 required_columns = ["Email", "Whose Task"]
 
@@ -208,8 +234,18 @@ if contact_df.empty:
     st.error("No contact details loaded from aXcelerate.")
     st.stop()
 
+preview_contact_df = contact_df.copy()
 st.subheader("aXcelerate Contact Details Preview")
-st.dataframe(contact_df.head(20), use_container_width=True)
+
+for col in sensitive_columns:
+    if col in preview_contact_df.columns:
+        preview_contact_df[col] = "*** HIDDEN ***"
+
+st.dataframe(
+    preview_contact_df.head(20),
+    use_container_width=True
+)
+# st.dataframe(preview_contact_df.head(20), use_container_width=True)
 
 contact_email_col = "EMAILADDRESS"
 contact_mobile_col = "MOBILEPHONE"
@@ -291,8 +327,18 @@ if selected_owner != "All":
 else:
     filtered_df = final_df
 
+peview_filtered_df = filtered_df.copy()
 st.subheader("Filtered Follow-up File")
-st.dataframe(filtered_df, use_container_width=True)
+
+for col in sensitive_columns:
+    if col in peview_filtered_df.columns:
+        peview_filtered_df[col] = "*** HIDDEN ***"
+
+st.dataframe(
+    peview_filtered_df.head(20),
+    use_container_width=True
+)
+# st.dataframe(filtered_df, use_container_width=True)
 
 excel_bytes = dataframe_to_excel_bytes(filtered_df)
 
