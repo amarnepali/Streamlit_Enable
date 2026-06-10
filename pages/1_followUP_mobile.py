@@ -144,7 +144,8 @@ import streamlit as st
 
 from utils.axcelerate_api import load_axcelerate_report
 
-
+# follow-up date column 
+date_col = "Follow Up"
 st.set_page_config(
     page_title="Follow-up Mobile Merge",
     layout="wide"
@@ -207,7 +208,10 @@ if uploaded_file is None:
 followup_df = read_uploaded_file(uploaded_file)
 
 preiew_followUp_df = followup_df.copy()
-
+preiew_followUp_df = preiew_followUp_df.sort_values(
+    by=date_col,
+    ascending=True
+)
 st.subheader("Uploaded Follow-up File")
 for col in sensitive_columns:
     if col in preiew_followUp_df.columns:
@@ -315,17 +319,72 @@ task_owners = sorted(
     .unique()
 )
 
-selected_owner = st.selectbox(
-    "Select whose tasks to download",
-    options=["All"] + task_owners
+# selected_owner = st.selectbox(
+#     "Select whose tasks to download",
+#     options=["All"] + task_owners
+# )
+
+# if selected_owner != "All":
+#     filtered_df = final_df[
+#         final_df["Whose Task"].astype(str) == selected_owner
+#     ]
+# else:
+#     filtered_df = final_df
+
+# Filter based on folow_Up date range
+st.subheader("Task Owner and Date Range Filter")
+
+
+
+if date_col not in final_df.columns:
+    st.error(f"{date_col} column not found in follow-up file.")
+    st.stop()
+
+final_df[date_col] = pd.to_datetime(
+    final_df[date_col],
+    errors="coerce",
+    dayfirst=True
 )
 
+min_date = final_df[date_col].min()
+max_date = final_df[date_col].max()
+
+col1, col2 = st.columns(2)
+
+with col1:
+    selected_owner = st.selectbox(
+        "Select whose tasks to download",
+        options=["All"] + task_owners
+    )
+
+with col2:
+    selected_date_range = st.date_input(
+        "Select date range",
+        value=(min_date.date(), max_date.date()),
+        min_value=min_date.date(),
+        max_value=max_date.date()
+    )
+
+filtered_df = final_df.copy()
+
 if selected_owner != "All":
-    filtered_df = final_df[
-        final_df["Whose Task"].astype(str) == selected_owner
+    filtered_df = filtered_df[
+        filtered_df["Whose Task"].astype(str) == selected_owner
     ]
-else:
-    filtered_df = final_df
+
+if len(selected_date_range) == 2:
+    start_date, end_date = selected_date_range
+
+    filtered_df = filtered_df[
+        (filtered_df[date_col].dt.date >= start_date) &
+        (filtered_df[date_col].dt.date <= end_date)
+    ]
+
+filtered_df = filtered_df.sort_values(
+    by=date_col,
+    ascending=True
+)
+
 
 peview_filtered_df = filtered_df.copy()
 st.subheader("Filtered Follow-up File")
@@ -335,7 +394,7 @@ for col in sensitive_columns:
         peview_filtered_df[col] = "*** HIDDEN ***"
 
 st.dataframe(
-    peview_filtered_df.head(20),
+    peview_filtered_df,
     use_container_width=True
 )
 # st.dataframe(filtered_df, use_container_width=True)
