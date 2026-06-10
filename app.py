@@ -70,7 +70,7 @@ st.subheader("Raw Data Preview")
 preview_df = df.copy()
 preview_df = preview_df.sort_values(
     by = "DATEENROLLED",
-    ascending = True
+    ascending = False
 )
 
 sensitive_columns = [
