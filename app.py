@@ -68,6 +68,10 @@ st.subheader("Raw Data Preview")
 # Enterprise-level privacy masking
 # Keeps the columns visible but hides sensitive values
 preview_df = df.copy()
+preview_df = preview_df.sort_values(
+    by = "DATEENROLLED",
+    ascending = True
+)
 
 sensitive_columns = [
     "FULLNAME",
