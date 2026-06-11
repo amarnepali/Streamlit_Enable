@@ -10,7 +10,7 @@ df = apply_common_filters(df)
 search = st.text_input(
     "Search by student name, USI, course, class, trainer, or organisation"
 )
-
+df = df.sort_values(by="DATEENROLLED", ascending = False)
 filtered = df.copy()
 
 if search:

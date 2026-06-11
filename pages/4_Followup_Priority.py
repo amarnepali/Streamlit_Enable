@@ -16,6 +16,8 @@ followup = df[
     ])
 ].copy()
 
+followup = followup.sort_values(by="DATEENROLLED", ascending=False)
+
 st.metric("Students Requiring Follow-up", len(followup))
 
 if followup.empty:

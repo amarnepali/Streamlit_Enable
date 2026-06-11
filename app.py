@@ -92,8 +92,7 @@ overdue = int(df["Overdue"].sum())
 due_soon = int(df["Due in 30 Days"].sum())
 completion_rate = round((completed / total) * 100, 1) if total else 0
 
-c1, c2, c3, c4, c5 = st.columns(5)
-c1.metric("Total Enrolments", total)
+c2, c3, c4, c5 = st.columns(4)
 c2.metric("Completed", completed, f"{completion_rate}%")
 c3.metric("Active", active)
 c4.metric("Overdue", overdue)
