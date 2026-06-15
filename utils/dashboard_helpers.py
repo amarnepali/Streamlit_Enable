@@ -93,8 +93,8 @@ def prepare_data(df):
             return "Medium Risk - Due Soon"
         if row["Missing USI"]:
             return "Admin Risk - Missing USI"
-        if row["No Trainer Assigned"]:
-            return "Admin Risk - No Trainer"
+        # if row["No Trainer Assigned"]:
+        #     return "Admin Risk - No Trainer"
         if row["Completion Status"] == "Completed":
             return "Completed"
         return "On Track"

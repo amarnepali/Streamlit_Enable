@@ -127,9 +127,17 @@ else:
 
 st.plotly_chart(fig1, use_container_width=True)
 
-priority_count = df["Follow-up Priority"].value_counts().reset_index()
-priority_count.columns = ["Priority", "Count"]
+priority_df = df[
+    df["Follow-up Priority"] != "Admin Risk - No Trainer"
+]
 
+priority_count = (
+    priority_df["Follow-up Priority"]
+    .value_counts()
+    .reset_index()
+)
+
+priority_count.columns = ["Priority", "Count"]
 fig = px.bar(
     priority_count,
     x="Priority",
@@ -142,10 +150,31 @@ st.plotly_chart(fig, use_container_width=True)
 
 if org_cols:
     st.subheader("Organisation Summary")
+
     org_col = org_cols[0]
-    org_count = df[org_col].value_counts().head(20).reset_index()
+
+    org_df = df[
+        df[org_col].notna()
+        & (df[org_col] != "Not recorded")
+        & (df[org_col].astype(str).str.strip() != "")
+    ]
+
+    org_count = (
+        org_df[org_col]
+        .value_counts()
+        .reset_index()
+    )
+
     org_count.columns = [org_col, "Count"]
-    fig = px.bar(org_count, x=org_col, y="Count", title=f"Top Organisations")
+
+    fig = px.bar(
+        org_count,
+        x=org_col,
+        y="Count",
+        text="Count",
+        title="Top Organisations"
+    )
+
     st.plotly_chart(fig, use_container_width=True)
 
 if course_cols:
