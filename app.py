@@ -59,13 +59,10 @@ st.dataframe(
 
 st.subheader("Dashboard Summary")
 
-col1, col2, col3 = st.columns(3)
+col1, col3 = st.columns(2)
 
 with col1:
     st.metric("Total Records", len(df))
-
-with col2:
-    st.metric("Total Columns", len(df.columns))
 
 with col3:
     st.metric("Last Refresh", pd.Timestamp.now().strftime("%d %b %Y %I:%M %p"))
@@ -101,14 +98,34 @@ c5.metric("Due Soon", due_soon)
 status_count = df["Completion Status"].value_counts().reset_index()
 status_count.columns = ["Status", "Count"]
 
-fig = px.pie(
+fig1 = px.pie(
     status_count,
     names="Status",
     values="Count",
     title="Completion Status"
 )
+# Course pie chart
+if "DIPLOMA" in df.columns:
+    course_count = (
+        df["DIPLOMA"]
+        .value_counts()
+        .reset_index()
+    )
 
-st.plotly_chart(fig, use_container_width=True)
+    course_count.columns = ["Course", "Count"]
+
+    fig = px.pie(
+        course_count,
+        names="Course",
+        values="Count",
+        title="Course Distribution"
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+else:
+    st.info("Course column DIPLOMA not found.")
+
+st.plotly_chart(fig1, use_container_width=True)
 
 priority_count = df["Follow-up Priority"].value_counts().reset_index()
 priority_count.columns = ["Priority", "Count"]
