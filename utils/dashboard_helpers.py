@@ -132,6 +132,33 @@ def apply_common_filters(df):
             "Follow-up Priority",
             sorted(df["Follow-up Priority"].dropna().unique())
         )
+        st.subheader("Date Filter")
+
+        available_date_cols = [
+            col for col in DATE_COLS
+            if col in df.columns and df[col].notna().any()
+        ]
+
+        selected_date_col = st.selectbox(
+            "Select date field",
+            available_date_cols,
+            index=0
+        )
+
+        min_date = df[selected_date_col].min().date()
+        max_date = df[selected_date_col].max().date()
+
+        selected_date_range = st.date_input(
+            "Select date range",
+            value=(min_date, max_date),
+            min_value=min_date,
+            max_value=max_date
+        )
+
+        # analysis_period = st.selectbox(
+        #     "Analysis period",
+        #     ["Daily", "Weekly", "Monthly"]
+        # )
 
     filtered = df.copy()
 
@@ -146,6 +173,35 @@ def apply_common_filters(df):
 
     if priority:
         filtered = filtered[filtered["Follow-up Priority"].isin(priority)]
+    if len(selected_date_range) == 2:
+        start_date, end_date = selected_date_range
+
+        filtered = filtered[
+            (filtered[selected_date_col].dt.date >= start_date) &
+            (filtered[selected_date_col].dt.date <= end_date)
+        ]
+
+    # if analysis_period == "Daily":
+    #     filtered["Analysis Period"] = filtered[selected_date_col].dt.date.astype(str)
+
+    # elif analysis_period == "Weekly":
+    #     filtered["Analysis Period"] = (
+    #         filtered[selected_date_col]
+    #         .dt.to_period("W")
+    #         .astype(str)
+    #     )
+
+    # elif analysis_period == "Monthly":
+    #     filtered["Analysis Period"] = (
+    #         filtered[selected_date_col]
+    #         .dt.to_period("M")
+    #         .astype(str)
+    #     )
+
+    filtered = filtered.sort_values(
+        by=selected_date_col,
+        ascending=False
+    )
 
     return filtered
 

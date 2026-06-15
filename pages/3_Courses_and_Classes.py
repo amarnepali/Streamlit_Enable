@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
 from utils.dashboard_helpers import load_enrolment_data, apply_common_filters
-
+import pandas as pd
 st.title("🎓 Courses and Classes")
 
 df = load_enrolment_data()
@@ -45,9 +45,19 @@ summary = (
     )
     .reset_index()
 )
+if summary.empty:
+    st.warning("No data available for the selected filters.")
+    st.stop()
 
-summary["Completion Rate %"] = (
-    summary["Completed"] / summary["Total"] * 100
-).round(1)
+summary["Completed"] = pd.to_numeric(summary["Completed"], errors="coerce").fillna(0)
+summary["Total"] = pd.to_numeric(summary["Total"], errors="coerce").fillna(0)
+
+summary["Completion Rate"] = (
+    summary["Completed"]
+    .div(summary["Total"].replace(0, pd.NA))
+    .mul(100)
+    .fillna(0)
+    .round(1)
+)
 
 st.dataframe(summary, use_container_width=True, hide_index=True)
