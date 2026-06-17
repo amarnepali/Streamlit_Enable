@@ -210,3 +210,73 @@ def to_excel_bytes(df):
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
         df.to_excel(writer, index=False, sheet_name="Export")
     return output.getvalue()
+
+
+
+############### For Enquiry Page section #################
+
+
+
+ENQUIRY_DATE_COL = "ENQUIREDDATE"
+
+@st.cache_data(ttl=3600)
+def load_enquiry_data():
+    report_id = st.secrets["REPORT_ID_ENQUIRY"]
+    df = load_axcelerate_report(report_id)
+    return prepare_enquiry_data(df)
+
+
+def prepare_enquiry_data(df):
+    df = df.copy()
+
+    if "Unnamed: 0" in df.columns:
+        df = df.drop(columns=["Unnamed: 0"])
+
+    text_cols = [
+        "GIVENNAME",
+        "SURNAME",
+        "ORGANISATIONNAME",
+        "EMAILADDRESS",
+        "MOBILEPHONE",
+        "ENQUIREDCOURSES",
+        "ENQUIREDMODE",
+        "ENQUIREDSTATUS",
+        "ENQUIREDSTATUSLOSTREASON",
+        "ENQUIRYSOURCEOFENQUIRY"
+    ]
+
+    for col in text_cols:
+        if col in df.columns:
+            df[col] = clean_text(df[col])
+
+    if "DOB" in df.columns:
+        df["DOB"] = pd.to_datetime(df["DOB"], errors="coerce", dayfirst=True)
+
+    if ENQUIRY_DATE_COL in df.columns:
+        df[ENQUIRY_DATE_COL] = pd.to_datetime(
+            df[ENQUIRY_DATE_COL],
+            errors="coerce",
+            dayfirst=True
+        )
+
+    df["Forecast Value"] = pd.to_numeric(
+        df["ENQUIREDFORECASTVALUE"],
+        errors="coerce"
+    ).fillna(0) if "ENQUIREDFORECASTVALUE" in df.columns else 0
+
+    df["Probability"] = pd.to_numeric(
+        df["ENQUIREDPROBABILITY"],
+        errors="coerce"
+    ).fillna(0) if "ENQUIREDPROBABILITY" in df.columns else 0
+
+    df["Expected Value"] = df["Forecast Value"] * (df["Probability"] / 100)
+
+    if "ENQUIREDSTATUS" in df.columns:
+        df["Enquiry Status"] = df["ENQUIREDSTATUS"].astype(str).str.upper().str.strip()
+    else:
+        df["Enquiry Status"] = "Not recorded"
+
+    return df
+
+
+    #########################################################################
