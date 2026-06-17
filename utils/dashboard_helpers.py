@@ -226,6 +226,30 @@ def load_enquiry_data():
     return prepare_enquiry_data(df)
 
 
+def parse_enquiry_date(series):
+    series = series.astype("string").str.strip()
+
+    slash_dates = series.str.contains("/", na=False)
+    dash_dates = series.str.contains("-", na=False)
+
+    parsed = pd.Series(pd.NaT, index=series.index)
+
+    # aXcelerate format: dd/mm/yyyy
+    parsed.loc[slash_dates] = pd.to_datetime(
+        series.loc[slash_dates],
+        format="%d/%m/%Y",
+        errors="coerce"
+    )
+
+    # Already converted / ISO format: yyyy-mm-dd
+    parsed.loc[dash_dates] = pd.to_datetime(
+        series.loc[dash_dates],
+        errors="coerce"
+    )
+
+    return parsed
+
+
 def prepare_enquiry_data(df):
     df = df.copy()
 
@@ -253,11 +277,7 @@ def prepare_enquiry_data(df):
         df["DOB"] = pd.to_datetime(df["DOB"], errors="coerce", dayfirst=True)
 
     if ENQUIRY_DATE_COL in df.columns:
-        df[ENQUIRY_DATE_COL] = pd.to_datetime(
-            df[ENQUIRY_DATE_COL],
-            errors="coerce",
-            dayfirst=True
-        )
+        df[ENQUIRY_DATE_COL] = parse_enquiry_date(df[ENQUIRY_DATE_COL])
 
     df["Forecast Value"] = pd.to_numeric(
         df["ENQUIREDFORECASTVALUE"],
