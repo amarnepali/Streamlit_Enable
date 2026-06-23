@@ -4,7 +4,7 @@ import streamlit as st
 
 # API_URL = "https://enablecollege.stg.axcelerate.com/api/report/saved/run"
 
-API_URL = "https://enablecollege.axcelerate.com/api/report/saved/run"
+API_URL = "https://enablecollege.app.axcelerate.com/api/report/saved/run"
 
 
 @st.cache_data(ttl=3600)
